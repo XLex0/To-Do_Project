@@ -1,0 +1,15 @@
+C:\Users\Xelan\OneDrive\Documentos\GitHub\To-Do_Project\Backend\TODO-Back\CapaAccesoBD\obj\Debug\net8.0\CapaAccesoBD.csproj.AssemblyReference.cache
+C:\Users\Xelan\OneDrive\Documentos\GitHub\To-Do_Project\Backend\TODO-Back\CapaAccesoBD\obj\Debug\net8.0\CapaAccesoBD.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Xelan\OneDrive\Documentos\GitHub\To-Do_Project\Backend\TODO-Back\CapaAccesoBD\obj\Debug\net8.0\CapaAccesoBD.AssemblyInfoInputs.cache
+C:\Users\Xelan\OneDrive\Documentos\GitHub\To-Do_Project\Backend\TODO-Back\CapaAccesoBD\obj\Debug\net8.0\CapaAccesoBD.AssemblyInfo.cs
+C:\Users\Xelan\OneDrive\Documentos\GitHub\To-Do_Project\Backend\TODO-Back\CapaAccesoBD\obj\Debug\net8.0\CapaAccesoBD.csproj.CoreCompileInputs.cache
+C:\Users\Xelan\OneDrive\Documentos\GitHub\To-Do_Project\Backend\TODO-Back\CapaAccesoBD\obj\Debug\net8.0\CapaAccesoBD.sourcelink.json
+C:\Users\Xelan\OneDrive\Documentos\GitHub\To-Do_Project\Backend\TODO-Back\CapaAccesoBD\bin\Debug\net8.0\CapaAccesoBD.deps.json
+C:\Users\Xelan\OneDrive\Documentos\GitHub\To-Do_Project\Backend\TODO-Back\CapaAccesoBD\bin\Debug\net8.0\CapaAccesoBD.runtimeconfig.json
+C:\Users\Xelan\OneDrive\Documentos\GitHub\To-Do_Project\Backend\TODO-Back\CapaAccesoBD\bin\Debug\net8.0\CapaAccesoBD.dll
+C:\Users\Xelan\OneDrive\Documentos\GitHub\To-Do_Project\Backend\TODO-Back\CapaAccesoBD\bin\Debug\net8.0\CapaAccesoBD.pdb
+C:\Users\Xelan\OneDrive\Documentos\GitHub\To-Do_Project\Backend\TODO-Back\CapaAccesoBD\obj\Debug\net8.0\CapaAccesoBD.dll
+C:\Users\Xelan\OneDrive\Documentos\GitHub\To-Do_Project\Backend\TODO-Back\CapaAccesoBD\obj\Debug\net8.0\refint\CapaAccesoBD.dll
+C:\Users\Xelan\OneDrive\Documentos\GitHub\To-Do_Project\Backend\TODO-Back\CapaAccesoBD\obj\Debug\net8.0\CapaAccesoBD.pdb
+C:\Users\Xelan\OneDrive\Documentos\GitHub\To-Do_Project\Backend\TODO-Back\CapaAccesoBD\obj\Debug\net8.0\CapaAccesoBD.genruntimeconfig.cache
+C:\Users\Xelan\OneDrive\Documentos\GitHub\To-Do_Project\Backend\TODO-Back\CapaAccesoBD\obj\Debug\net8.0\ref\CapaAccesoBD.dll
