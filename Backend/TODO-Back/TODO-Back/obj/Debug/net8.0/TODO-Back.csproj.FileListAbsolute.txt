@@ -1,0 +1,8 @@
+C:\Users\Xelan\OneDrive\Documentos\GitHub\To-Do_Project\Backend\TODO-Back\TODO-Back\obj\Debug\net8.0\TODO-Back.csproj.AssemblyReference.cache
+C:\Users\Xelan\OneDrive\Documentos\GitHub\To-Do_Project\Backend\TODO-Back\TODO-Back\obj\Debug\net8.0\TODO-Back.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Xelan\OneDrive\Documentos\GitHub\To-Do_Project\Backend\TODO-Back\TODO-Back\obj\Debug\net8.0\TODO-Back.AssemblyInfoInputs.cache
+C:\Users\Xelan\OneDrive\Documentos\GitHub\To-Do_Project\Backend\TODO-Back\TODO-Back\obj\Debug\net8.0\TODO-Back.AssemblyInfo.cs
+C:\Users\Xelan\OneDrive\Documentos\GitHub\To-Do_Project\Backend\TODO-Back\TODO-Back\obj\Debug\net8.0\TODO-Back.csproj.CoreCompileInputs.cache
+C:\Users\Xelan\OneDrive\Documentos\GitHub\To-Do_Project\Backend\TODO-Back\TODO-Back\obj\Debug\net8.0\TODO-Back.MvcApplicationPartsAssemblyInfo.cs
+C:\Users\Xelan\OneDrive\Documentos\GitHub\To-Do_Project\Backend\TODO-Back\TODO-Back\obj\Debug\net8.0\TODO-Back.MvcApplicationPartsAssemblyInfo.cache
+C:\Users\Xelan\OneDrive\Documentos\GitHub\To-Do_Project\Backend\TODO-Back\TODO-Back\obj\Debug\net8.0\TODO-Back.sourcelink.json
