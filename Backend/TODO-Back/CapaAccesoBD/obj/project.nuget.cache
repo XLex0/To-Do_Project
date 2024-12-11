@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "+CvMpxAZaYU=",
+  "dgSpecHash": "IsKCyBc8354=",
   "success": true,
   "projectFilePath": "C:\\Users\\Xelan\\OneDrive\\Documentos\\GitHub\\To-Do_Project\\Backend\\TODO-Back\\CapaAccesoBD\\CapaAccesoBD.csproj",
   "expectedPackageFiles": [
@@ -41,10 +41,13 @@
     "C:\\Users\\Xelan\\.nuget\\packages\\system.composition.hosting\\7.0.0\\system.composition.hosting.7.0.0.nupkg.sha512",
     "C:\\Users\\Xelan\\.nuget\\packages\\system.composition.runtime\\7.0.0\\system.composition.runtime.7.0.0.nupkg.sha512",
     "C:\\Users\\Xelan\\.nuget\\packages\\system.composition.typedparts\\7.0.0\\system.composition.typedparts.7.0.0.nupkg.sha512",
+    "C:\\Users\\Xelan\\.nuget\\packages\\system.configuration.configurationmanager\\9.0.0\\system.configuration.configurationmanager.9.0.0.nupkg.sha512",
     "C:\\Users\\Xelan\\.nuget\\packages\\system.diagnostics.diagnosticsource\\9.0.0\\system.diagnostics.diagnosticsource.9.0.0.nupkg.sha512",
+    "C:\\Users\\Xelan\\.nuget\\packages\\system.diagnostics.eventlog\\9.0.0\\system.diagnostics.eventlog.9.0.0.nupkg.sha512",
     "C:\\Users\\Xelan\\.nuget\\packages\\system.io.pipelines\\9.0.0\\system.io.pipelines.9.0.0.nupkg.sha512",
     "C:\\Users\\Xelan\\.nuget\\packages\\system.reflection.metadata\\7.0.0\\system.reflection.metadata.7.0.0.nupkg.sha512",
     "C:\\Users\\Xelan\\.nuget\\packages\\system.runtime.compilerservices.unsafe\\6.0.0\\system.runtime.compilerservices.unsafe.6.0.0.nupkg.sha512",
+    "C:\\Users\\Xelan\\.nuget\\packages\\system.security.cryptography.protecteddata\\9.0.0\\system.security.cryptography.protecteddata.9.0.0.nupkg.sha512",
     "C:\\Users\\Xelan\\.nuget\\packages\\system.text.encodings.web\\9.0.0\\system.text.encodings.web.9.0.0.nupkg.sha512",
     "C:\\Users\\Xelan\\.nuget\\packages\\system.text.json\\9.0.0\\system.text.json.9.0.0.nupkg.sha512",
     "C:\\Users\\Xelan\\.nuget\\packages\\system.threading.channels\\7.0.0\\system.threading.channels.7.0.0.nupkg.sha512"

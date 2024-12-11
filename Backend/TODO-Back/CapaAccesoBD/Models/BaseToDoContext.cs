@@ -1,4 +1,13 @@
-﻿using System;
+﻿/*
+ * Fecha de desarrollo: 10/12/2024
+ * By: Xelan - AM
+ * 
+ * Uso de Entity Framework para conexión hacia una base de datos Postgres
+ * 
+ * "Una frase sencilla, para este momento tan complejo." Me.
+ */
+
+using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 
@@ -6,14 +15,16 @@ namespace CapaAccesoBD.Models;
 
 public partial class BaseToDoContext : DbContext
 {
-    public BaseToDoContext()
-    {
-    }
+    //Constructor por defecto del Contexto, se debe pasar un DbContextOptions 
+    //ecnargado de dar la configuración y parámetos necesarios para la conexión 
+
 
     public BaseToDoContext(DbContextOptions<BaseToDoContext> options)
         : base(options)
     {
     }
+
+    //Atributos
 
     public virtual DbSet<Asignation> Asignations { get; set; }
 
@@ -23,9 +34,8 @@ public partial class BaseToDoContext : DbContext
 
     public virtual DbSet<Usuario> Usuarios { get; set; }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseNpgsql("Host=localhost;Database=Base_TO_DO;Username=postgres;Password=A20x21M76v");
+    // sobrescritura de la estructura que infiere nuestro ORM
+    // es decir conexiones, tuplas, tablas, llaves, etc.
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
