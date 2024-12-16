@@ -11,4 +11,19 @@
     <ProjectReference Include="..\CapaAccesoBD\CapaAccesoBD.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Update="zConfig.Designer.cs">
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>zConfig.settings</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="zConfig.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>zConfig.Designer.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+
 </Project>

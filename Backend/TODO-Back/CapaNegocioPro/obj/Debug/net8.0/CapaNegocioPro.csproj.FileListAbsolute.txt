@@ -37,3 +37,4 @@ C:\Users\Xelan\OneDrive\Documentos\GitHub\To-Do_Project\Backend\TODO-Back\CapaNe
 C:\Users\Xelan\OneDrive\Documentos\GitHub\To-Do_Project\Backend\TODO-Back\CapaNegocioPro\bin\Debug\net8.0\CapaAccesoBD.dll
 C:\Users\Xelan\OneDrive\Documentos\GitHub\To-Do_Project\Backend\TODO-Back\CapaNegocioPro\bin\Debug\net8.0\CapaAccesoBD.pdb
 C:\Users\Xelan\OneDrive\Documentos\GitHub\To-Do_Project\Backend\TODO-Back\CapaNegocioPro\obj\Debug\net8.0\CapaNego.20BCD3DE.Up2Date
+C:\Users\Xelan\OneDrive\Documentos\GitHub\To-Do_Project\Backend\TODO-Back\CapaNegocioPro\bin\Debug\net8.0\CapaNegocioPro.dll.config
