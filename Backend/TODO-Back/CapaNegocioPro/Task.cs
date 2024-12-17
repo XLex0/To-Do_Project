@@ -52,5 +52,10 @@ namespace CapaNegocioPro
         public void setEndDate(string endDate) { this.endDate = endDate; }
         public void setPriority(string priority) { this.priority = priority; }
         public void setCategory(string category) { this.category.Add(category); }
+
+        public void Imprimir()
+        {
+            Console.WriteLine($"{idtask}, {description}");
+        }
     }
 }

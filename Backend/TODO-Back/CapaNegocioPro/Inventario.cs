@@ -8,6 +8,7 @@ using Task = System.Threading.Tasks.Task;
 using CapaAccesoBD.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Runtime.CompilerServices;
+using System.Diagnostics.Eventing.Reader;
 
 namespace CapaNegocioPro
 {
@@ -16,8 +17,9 @@ namespace CapaNegocioPro
         private List<Task> inventarioTareas {get; set;}
         private List<Category> inventarioCategorias { get; set; }
 
-        private CapaAccesoBD.Models.Usuario user { get; set; } 
+        private CapaAccesoBD.Models.Usuario user { get; set; }
 
+        public bool login {  get; set; }
 
         public List<Category> UpdateCategory(CapaAccesoBD.Models.Usuario user)
         {
@@ -81,7 +83,7 @@ namespace CapaNegocioPro
                     {
                         foreach (var asign in task.Asignations)
                         {
-                                var categoria= asign.IdlabelNavigation.Name,
+                            var categoria = asign.IdlabelNavigation.Name;
 
                                 if(categoria != null)
                             {
@@ -89,14 +91,14 @@ namespace CapaNegocioPro
                             }
                         }
                     }
+                    tasksToReturn.Add(Task);
                 }
 
-
+                return tasksToReturn;
             }
             catch (Exception e) {
                 Console.WriteLine($"Error Cargando Tareas {e}");
             }
-
 
 
             return new List<Task>();
@@ -112,7 +114,7 @@ namespace CapaNegocioPro
         }
         public Inventario(string username, string password)
         {
-           var user = Context.GetInstance().GetDbContext().Usuarios.FirstOrDefault(x => x.Username == "username");
+           var user = Context.GetInstance().GetDbContext().Usuarios.FirstOrDefault(x => x.Username == username);
  
             if ( user!=null && password == user.Password)
             {
@@ -126,10 +128,28 @@ namespace CapaNegocioPro
 
                 }catch (Exception e) { Console.WriteLine($"Error al ingresar Datos Base: {e}"); }
 
+                this.login = true;
+            }
+            else
+            {
+                this.login = false;
             }
         }
 
-
+        public void imprimirTask()
+        {
+            if (inventarioTareas != null)
+            {
+                foreach (var item in this.inventarioTareas)
+                {
+                    item.Imprimir();
+                }
+            }
+            else
+            {
+                Console.WriteLine("NO ingreso");
+            }
+        }
      
     }
 }

@@ -9,6 +9,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Task = System.Threading.Tasks.Task;
 using CapaAccesoBD.Models;
+using System.Runtime.CompilerServices;
 
 namespace CapaNegocioPro
 {
@@ -18,26 +19,17 @@ namespace CapaNegocioPro
         {
 
 
-            var dbContext = Context.GetInstance().GetDbContext();
+            var user = new Usuario();
 
-            var tasks = await dbContext.Tasks.ToListAsync();
+            user.login("user1", "user2");
 
+            user.getInventario().imprimirTask();
 
+            user.logout();
 
+            user.login("usuario1", "password1");
 
-
-            var usuario = dbContext.Usuarios.FirstOrDefault(x => x.Username == "usuario1");
-              
-
-
-
-            Console.WriteLine($"hola {usuario.Password}");
-            //        // Imprimir los detalles de cada tarea
-            foreach (var task in tasks)
-                    {
-                       Console.WriteLine($"ID: {task.Idtask}, Description: {task.Description}, Priority: {task.Priority}, fecha:{task.Creationdate}");
-                   }
-
+            user.getInventario().imprimirTask();
 
         }
     }
