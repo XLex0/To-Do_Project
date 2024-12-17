@@ -9,6 +9,7 @@ using CapaAccesoBD.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Runtime.CompilerServices;
 using System.Diagnostics.Eventing.Reader;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace CapaNegocioPro
 {
@@ -21,7 +22,7 @@ namespace CapaNegocioPro
 
         public bool login {  get; set; }
 
-        public List<Category> UpdateCategory(CapaAccesoBD.Models.Usuario user)
+        private List<Category> UpdateCategory(CapaAccesoBD.Models.Usuario user)
         {
 
             var categoriesToReturn = new List<Category>() { new Category(0, "default")};
@@ -55,16 +56,16 @@ namespace CapaNegocioPro
             return categoriesToReturn;
         }
 
-        public List<Task> UpdateTask(CapaAccesoBD.Models.Usuario user)
+        private List<Task> UpdateTask(CapaAccesoBD.Models.Usuario user)
         {
-            var tasksToReturn = new List<Task>();   
+            var tasksToReturn = new List<Task>();
+            var dbacces = Context.GetInstance().GetDbContext();
 
             try
             {
-                var tasks = Context.GetInstance().GetDbContext()
-                                      .Tasks
-                                      .Where(x => x.Iduser == user.Iduser)
-                                      .ToList();
+                var tasks = dbacces.Tasks
+                                   .Where(x => x.Iduser == user.Iduser)
+                                   .ToList();
                 foreach(var task in tasks)
                 {
                     var Task = new Task(task.Idtask, task.Description, task.Creationdate.ToString());
@@ -79,18 +80,16 @@ namespace CapaNegocioPro
                         Task.setPriority(task.Priority);
                     }
 
-                    if (task.Asignations != null && task.Asignations.Count() > 0)
-                    {
-                        foreach (var asign in task.Asignations)
-                        {
-                            var categoria = asign.IdlabelNavigation.Name;
+                    var asignaciones = dbacces.Asignations.Where(x => x.Idtask == task.Idtask).ToList();
+                    foreach (var asig in asignaciones) {
+                        var categories = dbacces.Categorylabels.Where(x => x.Idlabel == asig.Idlabel).ToList();
 
-                                if(categoria != null)
-                            {
-                                Task.setCategory(categoria);
-                            }
-                        }
+                        foreach (var category in categories) {
+
+                            Task.setCategory(category.Name);
+                         }
                     }
+
                     tasksToReturn.Add(Task);
                 }
 
@@ -103,14 +102,22 @@ namespace CapaNegocioPro
 
             return new List<Task>();
         }
-        public void reloadTask(CapaAccesoBD.Models.Usuario user)
-        {
-            this.inventarioTareas = UpdateTask(user);
-        }
 
-        public void reloadCategory(CapaAccesoBD.Models.Usuario user)
+        public void selectRemoveTask(int i)
         {
-            this.inventarioCategorias = UpdateCategory(user);
+            if (this.login) {
+                var task = inventarioTareas[i];
+                task.RemoveTask(task.getIdTask());
+                reloadTask();
+            }
+        }
+        public void selectAddTask(string description, string priority,  string? endDate = null)
+        {
+            if (this.login)
+            {
+                Task.CreateTask(description,  priority, this.user.Iduser, endDate );
+                reloadTask();
+            }
         }
         public Inventario(string username, string password)
         {
@@ -136,6 +143,17 @@ namespace CapaNegocioPro
             }
         }
 
+
+
+        private void reloadTask()
+        {
+            this.inventarioTareas = UpdateTask(this.user);
+        }
+
+        private void reloadCategory()
+        {
+            this.inventarioCategorias = UpdateCategory(this.user);
+        }
         public void imprimirTask()
         {
             if (inventarioTareas != null)
