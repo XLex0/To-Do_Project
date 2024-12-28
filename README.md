@@ -8,8 +8,7 @@ This project is a simple web app to manage your tasks and objectives, helping yo
 
 The app is currently in the development stage. As a result:
 
-- The program is not fully functional yet.
-- The file organization needs improvement.
+- The program has a API REST functional
 - Documentation needs to be compiled in a more structured way.
 
 ## Description
@@ -28,16 +27,21 @@ We are using the ORM Entity Framework, as it provides better security and simpli
 
 The app is being developed using .NET 8.
 
+### API 
+We use asp.net core to deploy our service
+
+
 ## Future Plans
 
 In the future, we plan to:
 
-- Build an API.
+- Documentate the routes
+- Deploy a Cloud Data Base 
 - Develop the frontend.
 
 ## Version
 
-The current version of the program is **Hyperion 0.1.1 (alpha)**.
+The current version of the program is **Hyperion 0.1.0 (pre-released)**.
 
 ## Image Structure
 
