@@ -12,32 +12,35 @@ using CapaAccesoBD.Models;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
+using System.Text.Json;
 
 
 namespace CapaNegocioPro
 {
     public class Task
     {
-        private int idtask {  get; set; }
+        private int idtask { get; set; }
         private string description { get; set; }
         private string priority { get; set; }
         private string startDate { get; set; }
         private string endDate { get; set; }
-        private List <string> category { get; set; }
+        private List<string> category { get; set; }
+
+       
 
 
         /**
          * Input(idTarea)
          * -- Se borra las asignaciones de Tarea y esta misma
          * Output: boolean Exito
-         */ 
+         */
         public Task(int id, string des, string star)
         {
             this.idtask = id;
             this.description = des;
             this.priority = "Medium";
             this.startDate = star;
-            this.category = new List<string> {"main"};
+            this.category = new List<string> { "main" };
         }
 
 
@@ -46,7 +49,7 @@ namespace CapaNegocioPro
          * -- Se borra las asignaciones de Tarea y esta misma
          * Output: boolean Exito
          */
-        public bool RemoveTask(int id)
+        public static bool RemoveTask(int id)
         {
             try
             {
@@ -56,7 +59,7 @@ namespace CapaNegocioPro
 
                 var tarea = dbContext.Tasks.FirstOrDefault(t => t.Idtask == id);
 
-               
+
 
                 var asignaciones = dbContext.Asignations.Where(a => a.Idtask == id).ToList();
 
@@ -87,7 +90,7 @@ namespace CapaNegocioPro
          * -- Se crea Tarea con los datos 
          * Output: boolean Exito
          */
-        public static bool CreateTask(string description, string priority,int idUser, string? endDate=null)
+        public static bool CreateTask(string description, string priority, int idUser, string endDate)
         {
             try
             {
@@ -97,7 +100,7 @@ namespace CapaNegocioPro
                 {
                     Description = description,
                     Priority = priority,
-                    Creationdate = DateOnly.FromDateTime(DateTime.Now), 
+                    Creationdate = DateOnly.FromDateTime(DateTime.Now),
                     Iduser = idUser,
                     Enddate = string.IsNullOrEmpty(endDate) ? null : DateOnly.Parse(endDate)
                 };
@@ -108,20 +111,15 @@ namespace CapaNegocioPro
                 Console.WriteLine("Añadida Tarea");
                 return true;
             }
-            catch(Exception e)
+            catch (Exception e)
             {
-                Console.WriteLine($"Error al crear la tarea: {e.Message}");
+                Console.WriteLine($"Error al crear la tarea: {e}");
                 return false;
             }
         }
 
 
-  
-
-        public void Imprimir()
-        {
-            Console.WriteLine($"{idtask}, {description}");
-        }
+       
 
         /**
          * Setters de varios campos
@@ -129,6 +127,27 @@ namespace CapaNegocioPro
         public void setEndDate(string endDate) { this.endDate = endDate; }
         public void setPriority(string priority) { this.priority = priority; }
         public void setCategory(string category) { this.category.Add(category); }
+
+
         public int getIdTask() { return this.idtask; }
+        public string getPriority() { return this.priority; }
+        public List<string> getCategory() { return this.category; }
+
+
+        public object getTaskJson()
+        {
+            var taskData = new
+            {
+                idtask = this.idtask,
+                description = this.description,
+                priority = this.priority,
+                startDate = this.startDate,
+                endDate = string.IsNullOrEmpty(this.endDate) ? null : this.endDate,
+                category = this.category
+            };
+
+            return taskData;
+        }
     }
 }
+

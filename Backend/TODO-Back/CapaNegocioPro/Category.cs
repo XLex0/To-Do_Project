@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata.Conventions;
+﻿using CapaAccesoBD.Models;
+using Microsoft.EntityFrameworkCore.Metadata.Conventions;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -26,20 +27,31 @@ namespace CapaNegocioPro
         * -- Se crea Tarea con los datos 
         * Output: boolean Exito
         */
-        public static bool CreateCategory(string name, int idUser,  string? Description = null)
+        public static bool CreateCategory(string name, int idUser,  string description)
         {
             try
 
             {
                 var dbContext = Context.GetInstance().GetDbContext();
 
+                var existingCategory = dbContext.Categorylabels
+                                .FirstOrDefault(c => c.Name == name && c.Iduser == idUser);
+
+                if (existingCategory != null)
+                {
+                    Console.WriteLine("La categoría ya existe.");
+                    return false;
+                }
+
+
                 var nuevaCategory = new CapaAccesoBD.Models.Categorylabel
                 {
                     Name = name,
-                    Description = Description,
+                    Description = string.IsNullOrEmpty(description) ? "" : description,
                     Iduser = idUser,
                 };
 
+                
 
                 dbContext.Categorylabels.Add(nuevaCategory);
                 dbContext.SaveChanges();
@@ -48,12 +60,12 @@ namespace CapaNegocioPro
             }
             catch (Exception e)
             {
-                Console.WriteLine($"Error al crear la categoria: {e.Message}");
+                Console.WriteLine($"Error al crear la categoria: {e}");
                 return false;
             }
         }
 
-        public bool RemoveCategory(int id)
+        public static bool RemoveCategory(int id)
         {
             try
             {
@@ -84,13 +96,26 @@ namespace CapaNegocioPro
             }
             catch (Exception e)
             {
-                Console.WriteLine($"Error al eliminar la Categoria: {e.Message}");
+                Console.WriteLine($"Error al eliminar la Categoria: {e}");
                 return false;
             }
         }
-        public void setDescription(string description) {
-            this.description = description;    
+
+
+
+        public object getCategoryJson()
+        {
+            var categoryData = new
+            {
+                idlabel = this.idLabel,
+                name = this .name,
+                description = this.description,
+
+            };
+            return categoryData;
         }
+        public void setDescription(string description) {this.description = description;}
+        public int getIdLabel() {return this.idLabel;}
     }
 
 }

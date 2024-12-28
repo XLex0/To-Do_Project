@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore.Metadata.Conventions;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -10,39 +11,90 @@ namespace CapaNegocioPro
     public class Usuario
     {
         private Inventario inventario;
-        private bool log;
+        
 
-        public Usuario()
-        {
-            this.log = false;
-            this.inventario = null;
+        private Usuario(CapaAccesoBD.Models.Usuario user)
+        { 
+            this.inventario = new Inventario(user);
         }
 
-        public bool login (string user, string password)
+        public static object register(string username, string password, string email)
         {
             try
             {
-                this.inventario = new Inventario(user, password);
-                this.log = true;
+                var db = Context.GetInstance().GetDbContext();
 
-                return true;
+                var user = new CapaAccesoBD.Models.Usuario
+                {
+                    Username = username,
+                    Password = password,
+                    Email = email
+                };
+
+
+                db.Usuarios.Add(user);
+                db.SaveChanges();
+
+                return new { message = $"User: {user.Username} Creado correctamente" };
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error al hacer login {ex}");
+                return new
+                {
+                    message = $"Error creando user \n {ex.Message}",
+                };
             }
-            return false;
         }
-
-
-        public void logout() {
-            if (log)
+        public static int login(string username, string pass)
+        {
+            try
             {
-                this.log = false;
-                this.inventario = null;
+                var db = Context.GetInstance().GetDbContext();
+
+                var user = db.Usuarios.FirstOrDefault(t => t.Username == username);
+
+                if(user != null)
+                {
+                    if (user.Password== pass)
+                    {
+                        return user.Iduser;
+                    }
+                }
+
+            }catch(Exception e)
+            {
+                Console.WriteLine($"Error de login {e}");
             }
+
+
+            return -1;
         }
+
+        public static Usuario cargar (int id)
+        {
+            try
+            {
+                var db = Context.GetInstance().GetDbContext();
+
+                var x = db.Usuarios.FirstOrDefault(t => t.Iduser == id);
+
+             
+                var y = new Usuario(x);
+                return y;
+                    
+                
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error al recuperar User {ex}");
+            }
+            return null;
+        }
+
+
+
 
         public Inventario getInventario() { return this.inventario; }
+        
     }
 }

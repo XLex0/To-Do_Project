@@ -10,22 +10,24 @@ using Microsoft.EntityFrameworkCore;
 using System.Runtime.CompilerServices;
 using System.Diagnostics.Eventing.Reader;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using System.Text.Json;
+using System.Configuration;
 
 namespace CapaNegocioPro
 {
     public class Inventario
     {
-        private List<Task> inventarioTareas {get; set;}
+        private List<Task> inventarioTareas { get; set; }
         private List<Category> inventarioCategorias { get; set; }
 
         private CapaAccesoBD.Models.Usuario user { get; set; }
 
-        public bool login {  get; set; }
 
+        // se encarga de cargar la lista de las categorias del usuario
         private List<Category> UpdateCategory(CapaAccesoBD.Models.Usuario user)
         {
 
-            var categoriesToReturn = new List<Category>() { new Category(0, "default")};
+            var categoriesToReturn = new List<Category>() { new Category(0, "main") };
 
             try
             {
@@ -56,6 +58,7 @@ namespace CapaNegocioPro
             return categoriesToReturn;
         }
 
+        // se encarga de cargar la lista de las tareas del usuario
         private List<Task> UpdateTask(CapaAccesoBD.Models.Usuario user)
         {
             var tasksToReturn = new List<Task>();
@@ -64,110 +67,285 @@ namespace CapaNegocioPro
             try
             {
                 var tasks = dbacces.Tasks
-                                   .Where(x => x.Iduser == user.Iduser)
-                                   .ToList();
-                foreach(var task in tasks)
+                             .Where(x => x.Iduser == user.Iduser)
+                             .ToList();
+
+
+                tasksToReturn = tasks.Select(task =>
                 {
-                    var Task = new Task(task.Idtask, task.Description, task.Creationdate.ToString());
-                   
+                    var taskObj = new Task(task.Idtask, task.Description, task.Creationdate.ToString());
+
                     if (task.Enddate != null)
                     {
-                        Task.setEndDate(task.Enddate.ToString());
+                        taskObj.setEndDate(task.Enddate.ToString());
                     }
 
                     if (task.Priority != null)
                     {
-                        Task.setPriority(task.Priority);
+                        taskObj.setPriority(task.Priority);
                     }
 
-                    var asignaciones = dbacces.Asignations.Where(x => x.Idtask == task.Idtask).ToList();
-                    foreach (var asig in asignaciones) {
-                        var categories = dbacces.Categorylabels.Where(x => x.Idlabel == asig.Idlabel).ToList();
+                    // Obtener categorías directamente asociadas a la tarea
+                    var categories = dbacces.Asignations
+                                            .Where(asig => asig.Idtask == task.Idtask)
+                                            .SelectMany(asig => dbacces.Categorylabels.Where(c => c.Idlabel == asig.Idlabel))
+                                            .Select(c => c.Name)
+                                            .ToList();
 
-                        foreach (var category in categories) {
+                    // Asignar todas las categorías a la tarea
+                    categories.ForEach(categoryName => taskObj.setCategory(categoryName));
 
-                            Task.setCategory(category.Name);
-                         }
-                    }
-
-                    tasksToReturn.Add(Task);
-                }
+                    return taskObj;
+                }).ToList();
 
                 return tasksToReturn;
             }
             catch (Exception e) {
                 Console.WriteLine($"Error Cargando Tareas {e}");
             }
-
-
             return new List<Task>();
         }
 
-        public void selectRemoveTask(int i)
+        //carga el inventario
+        public Inventario(CapaAccesoBD.Models.Usuario user)
         {
-            if (this.login) {
-                var task = inventarioTareas[i];
-                task.RemoveTask(task.getIdTask());
-                reloadTask();
-            }
-        }
-        public void selectAddTask(string description, string priority,  string? endDate = null)
-        {
-            if (this.login)
+            try
             {
-                Task.CreateTask(description,  priority, this.user.Iduser, endDate );
-                reloadTask();
-            }
-        }
-        public Inventario(string username, string password)
-        {
-           var user = Context.GetInstance().GetDbContext().Usuarios.FirstOrDefault(x => x.Username == username);
- 
-            if ( user!=null && password == user.Password)
-            {
-
                 this.user = user;
-                try
-                {
-                    // En el caso de que sea un login exitoso, vamos a cargar las Categorias
-                    inventarioCategorias = UpdateCategory(user);
-                    inventarioTareas = UpdateTask(user);
+                inventarioCategorias = UpdateCategory(user);
+                inventarioTareas = UpdateTask(user);
 
-                }catch (Exception e) { Console.WriteLine($"Error al ingresar Datos Base: {e}"); }
-
-                this.login = true;
             }
-            else
+            catch (Exception e)
             {
-                this.login = false;
+                Console.WriteLine($"Error al ingresar Datos Base: {e}");
             }
         }
 
-
-
-        private void reloadTask()
+        // remover tareas de un usuario
+        public bool selectRemoveTask(int i)
         {
-            this.inventarioTareas = UpdateTask(this.user);
-        }
-
-        private void reloadCategory()
-        {
-            this.inventarioCategorias = UpdateCategory(this.user);
-        }
-        public void imprimirTask()
-        {
-            if (inventarioTareas != null)
+            foreach (var item in inventarioTareas)
             {
-                foreach (var item in this.inventarioTareas)
+                if (item.getIdTask() == i)
                 {
-                    item.Imprimir();
+                    return Task.RemoveTask(i);
                 }
             }
-            else
+            return false;
+        }
+
+        // añadir tarea a un usuario 
+        public bool selectAddTask(string description, string priority, string? endDate = null)
+        {
+
+            return Task.CreateTask(description, priority, this.user.Iduser, endDate);
+
+
+        }
+
+
+        // remover categoria de un usuario 
+        public bool selectRemoveCategory(int i)
+        {
+            foreach (var item in inventarioCategorias)
             {
-                Console.WriteLine("NO ingreso");
+                if (item.getIdLabel() == i)
+                {
+                    return Category.RemoveCategory(i);
+                }
+            }
+            return false;
+        }
+
+        // añadir categoria de un usuario 
+        public bool selectAddCategory(string name, int idUser, string? description = null)
+        {
+            return Category.CreateCategory(name, this.user.Iduser, description);
+        }
+
+        public bool SetInfoTask(string option, int idTask,  string content)
+        {
+            try
+            {
+                foreach (var item in inventarioTareas)
+                {
+                    if (item.getIdTask() == idTask)
+                    {
+                        switch (option.ToLower())
+                        {
+                            case "priority":
+
+                                if (content == "High" || content == "Medium" || content == "Low")
+                                {
+                                    item.setPriority(content); 
+                                    return true;
+                                }
+                                else
+                                {
+                                    return false;
+                                }
+                            case "date":
+                                if (DateTime.TryParse(content, out DateTime newEndDate))
+                                {
+                                    item.setEndDate(newEndDate.ToString()); 
+                                    return true;
+                                }
+                                else
+                                {
+                                    return false;
+                                }
+                        }
+                    }
+                }
+                return false;
+            
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"Error al crear la tarea: {e}");
+                return false;
             }
         }
-     
+
+        // agregar Categoria a tarea, i categorias, j tareas
+        public bool addedCategoryTask(int i, int j)
+        {
+            try
+            {
+                var category = inventarioCategorias.FirstOrDefault(c => c.getIdLabel() == i);
+                var task = inventarioTareas.FirstOrDefault(t => t.getIdTask() == j);
+                if (category == null || task == null)
+                {
+                    return false;
+                }
+                else
+                {
+                    var db = Context.GetInstance().GetDbContext();
+                    var asignacion = new CapaAccesoBD.Models.Asignation
+                    {
+                        Idlabel = i,
+                        Idtask = j
+                    };
+                    db.Asignations.Add(asignacion);
+                    db.SaveChanges();
+                    return true;
+                }
+
+            }
+            catch (Exception ex)
+            {
+                return false; 
+            }
+        }
+
+        //quitar asignacion
+        public bool removeCategoryTask(int i, int j)
+        {
+            try
+            {
+
+                var category = inventarioCategorias.FirstOrDefault(c => c.getIdLabel() == i);
+                var task = inventarioTareas.FirstOrDefault(t => t.getIdTask() == j);
+
+
+                if (category == null || task == null)
+                {
+                    return false;
+                }
+
+
+                var db = Context.GetInstance().GetDbContext();
+                var asignacion = db.Asignations.FirstOrDefault(a => a.Idlabel == i && a.Idtask == j);
+
+
+                if (asignacion == null)
+                {
+                    return false;
+                }
+
+
+                db.Asignations.Remove(asignacion);
+                db.SaveChanges();
+
+                return true;
+            }
+            catch (Exception e)
+            {
+
+                Console.WriteLine($"Error al eliminar la asignación: {e}");
+
+
+                return false;
+            }
+        }
+
+
+        // filtros 
+        public void filterPriority(string priority)
+        {
+
+            this.inventarioTareas = inventarioTareas
+           .Where(item => item.getPriority() == priority)
+           .ToList();
+        }
+
+        public void filterCategory(string category)
+        {
+
+            this.inventarioTareas = inventarioTareas
+           .Where(item => item.getCategory().Contains(category))
+           .ToList();
+
+        }
+
+   
+
+
+
+
+
+
+
+
+
+
+
+        // json get de Tareas y Categoria
+        public object ObtenerJsonDeTareas()
+        {
+            if (inventarioTareas != null && inventarioTareas.Any())
+            {
+                var listaDeTareas = inventarioTareas.Select(item => item.getTaskJson()).ToList();
+                return listaDeTareas;
+            }
+            else
+            {
+                return new { mensaje = "No hay tareas en el inventario." };
+            }
+        }
+
+        public object ObtenerJsonDeCategory()
+        {
+            if (inventarioCategorias != null && inventarioCategorias.Any())
+            {
+                var listadeCategorias = inventarioCategorias.Select(item => item.getCategoryJson()).ToList();
+                return listadeCategorias;
+            }
+            else
+            {
+                return new { mensaje = "No hay categorias en el inventario." };
+            }
+        }
+
+
     }
+
+
+
+
+
+
+
 }
+

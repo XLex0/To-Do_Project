@@ -5,7 +5,11 @@ VisualStudioVersion = 17.11.35327.3
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CapaAccesoBD", "CapaAccesoBD\CapaAccesoBD.csproj", "{F060DBDB-952D-4205-98CF-B1BB44B142BD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CapaNegocioPro", "CapaNegocioPro\CapaNegocioPro.csproj", "{F440A635-EEE4-47BD-83DD-1FC2CC8C81C0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CapaNegocioPro", "CapaNegocioPro\CapaNegocioPro.csproj", "{F440A635-EEE4-47BD-83DD-1FC2CC8C81C0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "APIRest", "APIRest\APIRest.csproj", "{0C631B31-5844-4903-95D7-15862C72EBA1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "APIConnect", "APIConnect\APIConnect.csproj", "{C78DF86E-6471-4BC9-9347-C0C6AACE1DE7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +25,14 @@ Global
 		{F440A635-EEE4-47BD-83DD-1FC2CC8C81C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F440A635-EEE4-47BD-83DD-1FC2CC8C81C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F440A635-EEE4-47BD-83DD-1FC2CC8C81C0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0C631B31-5844-4903-95D7-15862C72EBA1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0C631B31-5844-4903-95D7-15862C72EBA1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0C631B31-5844-4903-95D7-15862C72EBA1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0C631B31-5844-4903-95D7-15862C72EBA1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C78DF86E-6471-4BC9-9347-C0C6AACE1DE7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C78DF86E-6471-4BC9-9347-C0C6AACE1DE7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C78DF86E-6471-4BC9-9347-C0C6AACE1DE7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C78DF86E-6471-4BC9-9347-C0C6AACE1DE7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

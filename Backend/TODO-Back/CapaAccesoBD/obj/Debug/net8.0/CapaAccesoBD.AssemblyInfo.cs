@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("CapaAccesoBD")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+6741fcb5d8a09a9fdf32e3fe3521f283bfa5abd9")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+745f2858b30f3338e66de3d6312e7351e7d023af")]
 [assembly: System.Reflection.AssemblyProductAttribute("CapaAccesoBD")]
 [assembly: System.Reflection.AssemblyTitleAttribute("CapaAccesoBD")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

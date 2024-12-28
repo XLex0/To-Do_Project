@@ -19,18 +19,16 @@ namespace CapaNegocioPro
         {
 
 
-            var user = new Usuario();
+            var login = Usuario.login("usuario1", "password1");
+
+            var user = Usuario.cargar(1);
 
 
-            user.login("usuario1", "password1");
 
-            user.getInventario().imprimirTask();
+            Console.WriteLine(
+            user.getInventario().ObtenerJsonDeTareas());
 
-            //user.getInventario().selectAddTask("hacer IA", "Medium");
-
-                user.getInventario().imprimirTask();
-
-            user.getInventario().selectRemoveTask(0);
+            //user.getInventario().selectRemoveTask(0);
 
         }
     }
