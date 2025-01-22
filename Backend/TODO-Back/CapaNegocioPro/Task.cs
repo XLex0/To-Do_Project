@@ -52,7 +52,7 @@ namespace CapaNegocioPro
          * -- Se borra las asignaciones de Tarea y esta misma
          * Output: boolean Exito
          */
-        public static bool RemoveTask(int id)
+        public bool RemoveTask()
         {
             try
             {
@@ -60,11 +60,10 @@ namespace CapaNegocioPro
                 var dbContext = Context.GetInstance().GetDbContext();
 
 
-                var tarea = dbContext.Tasks.FirstOrDefault(t => t.Idtask == id);
+                var tarea = dbContext.Tasks.FirstOrDefault(t => t.Idtask == this.idtask);
 
 
-
-                var asignaciones = dbContext.Asignations.Where(a => a.Idtask == id).ToList();
+                var asignaciones = dbContext.Asignations.Where(a => a.Idtask == this.idtask).ToList();
 
                 if (asignaciones.Any())
                 {
@@ -77,7 +76,7 @@ namespace CapaNegocioPro
 
                 dbContext.SaveChanges();
 
-                Console.WriteLine($"Tarea con ID {id} eliminada exitosamente, junto con sus asignaciones.");
+                Console.WriteLine($"Tarea con ID {this.idtask} eliminada exitosamente, junto con sus asignaciones.");
 
                 return true;
             }
@@ -105,7 +104,8 @@ namespace CapaNegocioPro
                     Priority = priority,
                     Creationdate = DateOnly.FromDateTime(DateTime.Now),
                     Iduser = idUser,
-                    Enddate = string.IsNullOrEmpty(endDate) ? null : DateOnly.Parse(endDate)
+                    Enddate = string.IsNullOrEmpty(endDate) ? null : DateOnly.Parse(endDate),
+                    Estado = true
                 };
 
 
@@ -122,12 +122,39 @@ namespace CapaNegocioPro
         }
 
 
-       
+
 
         /**
          * Setters de varios campos
          */
-        public void setEndDate(string endDate) { this.endDate = endDate; }
+        public void setEndDate(string endDate)
+        {
+            try
+            {
+     
+                var dbContext = Context.GetInstance().GetDbContext();
+
+                // Buscar la tarea en la base de datos usando su ID
+                var tarea = dbContext.Tasks.FirstOrDefault(t => t.Idtask == this.idtask);
+                if (tarea == null)
+                {
+                    return;
+                }
+
+                tarea.Enddate = string.IsNullOrEmpty(endDate) ? null : DateOnly.Parse(endDate);
+
+                dbContext.SaveChanges();
+
+                this.endDate = endDate;
+
+                Console.WriteLine("Fecha de finalización actualizada correctamente.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error al actualizar la fecha de finalización: {ex.Message}");
+            }
+        }
+
         public void setPriority(string priority) { this.priority = priority; }
         public void setCategory(string category) { this.category.Add(category); }
 

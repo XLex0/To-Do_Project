@@ -122,14 +122,16 @@ namespace CapaNegocioPro
             }
         }
 
-        // remover tareas de un usuario
+      
+
+
         public bool selectRemoveTask(int i)
         {
             foreach (var item in inventarioTareas)
             {
                 if (item.getIdTask() == i)
                 {
-                    return Task.RemoveTask(i);
+                    return item.RemoveTask();
                 }
             }
             return false;
