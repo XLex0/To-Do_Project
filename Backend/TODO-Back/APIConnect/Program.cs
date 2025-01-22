@@ -56,7 +56,7 @@ var app = builder.Build();
  *      {
  *      "Username":"nombre",
  *      "Password":"password",
- *      "Email": "email"
+ *      "Email": "email@outlook.com"
  *      }
  */
 app.MapPost("/register", (APIConnect.Modelos.UserRegister user) =>
@@ -70,11 +70,11 @@ app.MapPost("/register", (APIConnect.Modelos.UserRegister user) =>
  * EL login debe recibir un json del tipo 
  * "UserLogin":
  *      {
- *      "Username":"nombre",
- *      "Password":"password"
+ *      "Username":"JOhonDafe",
+ *      "Password":"ProGamer"
  *      }
  *      
- *      "usuario1", "password1"
+ *      
  *      
  *  retorna un token, que me sirve para hacer varias transacciones 
  */
@@ -148,9 +148,9 @@ app.MapGet("/test", (HttpContext context)=>{
 
 
 
-// Zona de tarea ---------------------------------------CRUD
+
 /*
- * [Requiere toke AUTHENTICATION]
+ * [Requiere token AUTHENTICATION]
  *GET /task:
  *Devuelve un Json con información de las tareas, se puede agregar filtros para 
  *devolver listas de tareas que cumplan ciertos requisitos
@@ -204,7 +204,7 @@ app.MapGet("/task/{filter?}/{type?}", (HttpContext context, string? filter=null,
  * Creamos una tarea Con un json de este tipo, endDate es opcional
  * {
   "Description": "Estudiar para el examen final",
-  "Priority": "High",
+  "Priority": "High", puede ser [
   "EndDate": "2024-12-31"
 }
 
@@ -299,7 +299,7 @@ app.MapPatch("task/category/{option}", (HttpContext context, string option, APIC
             switch (option.ToLower())
             {
                  case "add":
-                   sucess=  user.getInventario().addedCategoryTask(asig.IdCategory, asig.IdTask);
+                   sucess=  user.getInventario().AddedCategoryToTask(asig.Name, asig.IdTask, userId);
                     actionMessage = "agrego";
                     break;
 

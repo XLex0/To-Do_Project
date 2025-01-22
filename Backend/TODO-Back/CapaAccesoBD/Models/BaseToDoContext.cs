@@ -93,6 +93,7 @@ public partial class BaseToDoContext : DbContext
             entity.Property(e => e.Priority)
                 .HasMaxLength(10)
                 .HasColumnName("priority");
+            entity.Property(e => e.Estado).HasColumnName("state");
 
             entity.HasOne(d => d.IduserNavigation).WithMany(p => p.Tasks)
                 .HasForeignKey(d => d.Iduser)

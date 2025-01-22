@@ -24,6 +24,7 @@ namespace CapaNegocioPro
         private string priority { get; set; }
         private string startDate { get; set; }
         private string endDate { get; set; }
+        private bool state { get; set; }
         private List<string> category { get; set; }
 
        
@@ -34,13 +35,15 @@ namespace CapaNegocioPro
          * -- Se borra las asignaciones de Tarea y esta misma
          * Output: boolean Exito
          */
-        public Task(int id, string des, string star)
+        public Task(int id, string des, string star, bool estado)
         {
             this.idtask = id;
             this.description = des;
             this.priority = "Medium";
             this.startDate = star;
             this.category = new List<string> { "main" };
+            this.state = estado;
+
         }
 
 
@@ -132,6 +135,7 @@ namespace CapaNegocioPro
         public int getIdTask() { return this.idtask; }
         public string getPriority() { return this.priority; }
         public List<string> getCategory() { return this.category; }
+        public bool getState(){return this.state;}
 
 
         public object getTaskJson()
@@ -143,7 +147,8 @@ namespace CapaNegocioPro
                 priority = this.priority,
                 startDate = this.startDate,
                 endDate = string.IsNullOrEmpty(this.endDate) ? null : this.endDate,
-                category = this.category
+                category = this.category,
+                estado = this.state
             };
 
             return taskData;

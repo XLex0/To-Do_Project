@@ -115,7 +115,8 @@ namespace CapaNegocioPro
             return categoryData;
         }
         public void setDescription(string description) {this.description = description;}
-        public int getIdLabel() {return this.idLabel;}
+        public string getName() {return this.name;}
+        public int getIdLabel() { return this.idLabel; }
     }
 
 }

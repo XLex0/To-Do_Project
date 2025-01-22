@@ -23,51 +23,48 @@ namespace CapaNegocioPro {
             }
         }
         
-        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("localhost")]
+        [global::System.Configuration.DefaultSettingValueAttribute("junction.proxy.rlwy.net")]
         public string Host {
             get {
                 return ((string)(this["Host"]));
             }
-            set {
-                this["Host"] = value;
-            }
         }
         
-        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Base_TO_DO")]
+        [global::System.Configuration.DefaultSettingValueAttribute("railway")]
         public string Database {
             get {
                 return ((string)(this["Database"]));
             }
-            set {
-                this["Database"] = value;
-            }
         }
         
-        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("postgres")]
         public string Username {
             get {
                 return ((string)(this["Username"]));
             }
-            set {
-                this["Username"] = value;
-            }
         }
         
-        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("A20x21M76v")]
+        [global::System.Configuration.DefaultSettingValueAttribute("WcOPnzumpoQgLVvkvBVvceyPYLsqFmwJ")]
         public string Password {
             get {
                 return ((string)(this["Password"]));
             }
-            set {
-                this["Password"] = value;
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("40045")]
+        public string Port {
+            get {
+                return ((string)(this["Port"]));
             }
         }
     }

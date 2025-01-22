@@ -3,8 +3,9 @@
 {
     public class Asignacion
     { 
-        public int IdCategory{ get; set; }
+        public string Name{ get; set; }
         public int IdTask { get; set; }
+        public int IdCategory { get; set; }
 
     }
 }

@@ -17,6 +17,8 @@ public partial class Task
 
     public int Iduser { get; set; }
 
+    public bool Estado { get; set; } // Nuevo campo agregado
+
     public virtual ICollection<Asignation> Asignations { get; set; } = new List<Asignation>();
 
     public virtual Usuario IduserNavigation { get; set; } = null!;

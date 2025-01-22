@@ -73,7 +73,7 @@ namespace CapaNegocioPro
 
                 tasksToReturn = tasks.Select(task =>
                 {
-                    var taskObj = new Task(task.Idtask, task.Description, task.Creationdate.ToString());
+                    var taskObj = new Task(task.Idtask, task.Description, task.Creationdate.ToString(), task.Estado);
 
                     if (task.Enddate != null)
                     {
@@ -208,34 +208,53 @@ namespace CapaNegocioPro
             }
         }
 
-        // agregar Categoria a tarea, i categorias, j tareas
-        public bool addedCategoryTask(int i, int j)
+        public bool AddedCategoryToTask(string name, int taskId, int userId)
         {
+
             try
             {
-                var category = inventarioCategorias.FirstOrDefault(c => c.getIdLabel() == i);
-                var task = inventarioTareas.FirstOrDefault(t => t.getIdTask() == j);
-                if (category == null || task == null)
+                // Buscamo la tarea
+                var task = inventarioTareas.FirstOrDefault(t => t.getIdTask() == taskId);
+                if (task == null)
                 {
                     return false;
                 }
-                else
+
+                // Buscar o agregar la categoría
+                var category = inventarioCategorias.FirstOrDefault(c => c.getName() == name);
+                if (category == null)
                 {
-                    var db = Context.GetInstance().GetDbContext();
-                    var asignacion = new CapaAccesoBD.Models.Asignation
+                    if (!selectAddCategory(name, userId))
                     {
-                        Idlabel = i,
-                        Idtask = j
-                    };
-                    db.Asignations.Add(asignacion);
-                    db.SaveChanges();
-                    return true;
+                        Console.WriteLine($"No se pudo agregar la categoría '{name}'.");
+                        return false;
+                    }
+
+                    category = inventarioCategorias.FirstOrDefault(c => c.getName() == name);
+                    if (category == null)
+                    {
+                        Console.WriteLine($"La categoría '{name}' no se encontró después de intentar agregarla.");
+                        return false;
+                    }
                 }
 
+                // Realizar la asignación
+                var db = Context.GetInstance().GetDbContext();
+                var asignacion = new CapaAccesoBD.Models.Asignation
+                {
+                    Idlabel = category.getIdLabel(),
+                    Idtask = taskId
+                };
+
+                db.Asignations.Add(asignacion);
+                db.SaveChanges();
+
+                return true;
             }
             catch (Exception ex)
             {
-                return false; 
+                Console.WriteLine($"Error al agregar la categoría a la tarea: {ex.Message}");
+                return false;
             }
         }
 
@@ -299,7 +318,24 @@ namespace CapaNegocioPro
 
         }
 
-   
+        public void filterCompleted()
+        {
+
+            this.inventarioTareas = inventarioTareas
+           .Where(item => !item.getState())
+           .ToList();
+
+        }
+        public void filterActual()
+        {
+
+            this.inventarioTareas = inventarioTareas
+           .Where(item => item.getState())
+           .ToList();
+
+        }
+
+
 
 
 

@@ -16,8 +16,8 @@ public class Context
     private Context()
     {
         var options = new DbContextOptionsBuilder<BaseToDoContext>()
-            .UseNpgsql($"Host={zConfig.Default.Host};Database={zConfig.Default.Database};Username={zConfig.Default.Username};Password={zConfig.Default.Password}")
-            .Options;
+        .UseNpgsql($"Host={zConfig.Default.Host};Port={zConfig.Default.Port};Database={zConfig.Default.Database};Username={zConfig.Default.Username};Password={zConfig.Default.Password}")
+        .Options;
 
         _context = new BaseToDoContext(options);
     }
