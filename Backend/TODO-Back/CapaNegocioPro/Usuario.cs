@@ -35,13 +35,15 @@ namespace CapaNegocioPro
                 db.Usuarios.Add(user);
                 db.SaveChanges();
 
-                return new { message = $"User: {user.Username} Creado correctamente" };
+                return new { sucess=true, message = $"User: {user.Username} Creado correctamente" };
             }
             catch (Exception ex)
             {
                 return new
                 {
-                    message = $"Error creando user \n {ex.Message}",
+                    success = false,
+                    message = $"Error creando user: {ex}",
+
                 };
             }
         }
@@ -53,15 +55,17 @@ namespace CapaNegocioPro
 
                 var user = db.Usuarios.FirstOrDefault(t => t.Username == username);
 
-                if(user != null)
+                if (user != null)
                 {
-                    if (user.Password== pass)
+                    if (user.Password == pass)
                     {
                         return user.Iduser;
+                      
                     }
                 }
 
-            }catch(Exception e)
+            }
+            catch (Exception e)
             {
                 Console.WriteLine($"Error de login {e}");
             }
@@ -69,8 +73,7 @@ namespace CapaNegocioPro
 
             return -1;
         }
-
-        public static Usuario cargar (int id)
+            public static Usuario cargar (int id)
         {
             try
             {

@@ -4,68 +4,77 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace CapaNegocioPro
 {
-    public class Category
+    public class Category:IProducto
     {
+        private int idUser {  get; set; }
         private int idLabel { get; set; }
         private string name { get; set; }
         private string description { get; set; }
 
-        public Category(int idLabel, string name)
+        public Category(int idLabel, string name, int idUser, string? description)
         {
+            this.idUser = idUser;
             this.idLabel = idLabel;
             this.name = name;
-            this.description = "";
+            this.description = description ?? ""; 
         }
 
-        /**
-        * Input(descripcionTarea, prioridadTarea, idUser, finTarea?)
-        * -- Se crea Tarea con los datos 
-        * Output: boolean Exito
-        */
-        public static bool CreateCategory(string name, int idUser,  string description)
+
+
+        public Category(string name, string? description = null)
+        {
+            this.name = name;
+            this.description = description ?? "";
+        }
+
+
+
+        public bool CargarProducto( int idUser)
         {
             try
-
             {
                 var dbContext = Context.GetInstance().GetDbContext();
 
+                // Comprobar si ya existe una categoría con el mismo nombre para el mismo usuario
                 var existingCategory = dbContext.Categorylabels
-                                .FirstOrDefault(c => c.Name == name && c.Iduser == idUser);
+               .FirstOrDefault(c => c.Name == this.name && c.Iduser == idUser);
 
                 if (existingCategory != null)
                 {
                     Console.WriteLine("La categoría ya existe.");
-                    return false;
+                    return false ;
                 }
 
-
+                // Crear la nueva categoría
                 var nuevaCategory = new CapaAccesoBD.Models.Categorylabel
                 {
-                    Name = name,
-                    Description = string.IsNullOrEmpty(description) ? "" : description,
+                    Name = this.name,
+                    Description = this.description,
                     Iduser = idUser,
                 };
 
-                
-
+                // Guardar la nueva categoría en la base de datos
                 dbContext.Categorylabels.Add(nuevaCategory);
                 dbContext.SaveChanges();
-                Console.WriteLine("Añadida Categoria");
-                return true;
+                 
+                return true ;
             }
             catch (Exception e)
             {
-                Console.WriteLine($"Error al crear la categoria: {e}");
-                return false;
+                Console.WriteLine($"Error al crear la categoría: {e.Message}");
             }
+            return false ;
         }
 
-        public static bool RemoveCategory(int id)
+
+
+        public bool EliminarProducto()
         {
             try
             {
@@ -73,11 +82,11 @@ namespace CapaNegocioPro
                 var dbContext = Context.GetInstance().GetDbContext();
 
 
-                var category = dbContext.Categorylabels.FirstOrDefault(t => t.Idlabel == id);
+                var category = dbContext.Categorylabels.FirstOrDefault(t => t.Idlabel == this.idLabel);
 
 
 
-                var asignaciones = dbContext.Asignations.Where(a => a.Idlabel == id).ToList();
+                var asignaciones = dbContext.Asignations.Where(a => a.Idlabel == this.idLabel).ToList();
 
                 if (asignaciones.Any())
                 {
@@ -90,7 +99,7 @@ namespace CapaNegocioPro
 
                 dbContext.SaveChanges();
 
-                Console.WriteLine($"Categoria con ID {id} eliminada exitosamente, junto con sus asignaciones.");
+                Console.WriteLine($"Categoria con ID {this.idLabel} eliminada exitosamente, junto con sus asignaciones.");
 
                 return true;
             }
@@ -101,9 +110,10 @@ namespace CapaNegocioPro
             }
         }
 
+        // se encarga de cargar la lista de las categorias del usuario
+     
 
-
-        public object getCategoryJson()
+        public object RetornarJson()
         {
             var categoryData = new
             {

@@ -52,7 +52,7 @@ var app = builder.Build();
 
 /*
  * POST /register
- * PAra crear un nuevo usuario debo enviar
+ * Para crear un nuevo usuario debo enviar
  *      {
  *      "Username":"nombre",
  *      "Password":"password",
@@ -62,7 +62,10 @@ var app = builder.Build();
 app.MapPost("/register", (APIConnect.Modelos.UserRegister user) =>
 {
    var response = Usuario.register(user.Username, user.Password, user.Email);
+
+
     return Results.Json(response);
+
 });
 
 /*
@@ -109,7 +112,7 @@ app.MapPost("/login", (APIConnect.Modelos.UserLogin login) =>
      
         var response = new
         {
-            status = 200,
+            success=true,
             message = "Inicio de sesión exitoso",
             token = jwtToken 
         };
@@ -120,7 +123,7 @@ app.MapPost("/login", (APIConnect.Modelos.UserLogin login) =>
         // Respuesta en caso de error
         var response = new
         {
-            status = 400,
+            success = false,
             message = "Inicio de sesión fallido. Usuario o contraseña incorrectos."
         };
         return Results.Json(response);
@@ -138,11 +141,11 @@ app.MapGet("/test", (HttpContext context)=>{
 
     if (userId > 0)
     {
-        return Results.Json(new { status = 200, message = "Token válido", userId });
+        return Results.Json(new { success=true, message = "Token válido", userId });
     }
     else
     {
-        return Results.Json(new { status = 401, message = "Token inválido o expirado" });
+        return Results.Json(new { uccess = false, message = "Token inválido o expirado" });
     };
 });
 
@@ -180,20 +183,20 @@ app.MapGet("/task/{filter?}/{type?}", (HttpContext context, string? filter=null,
                         break;
 
                     default:
-                        return Results.Json(new { status = 400, message = "Filtro inválido. Usa 'priority' o 'category'." });
+                        return Results.Json(new { success = false, message = "Filtro inválido. Usa 'priority' o 'category'." });
                 }
             }
 
-            var json = user.getInventario().ObtenerJsonDeTareas();
-            return Results.Json(new { status = 200, data = json });
+            var json = user.getInventario().ObtenerJsonInventario("tareas");
+            return Results.Json(new { status = 200, message = "Inventario Enviado con exito", data = json });
         }
         else
         {
-            return Results.Json(new { status = 401, message = "Token inválido o expirado" });
+            return Results.Json(new { success = false, message = "Token inválido o expirado" });
         };
     }catch(Exception e)
     {
-        return Results.Json(new { status = 500, message = "Error accediendo Inventario" });
+        return Results.Json(new { success = false, message = "Error accediendo Inventario" });
     }
 
 
@@ -247,7 +250,7 @@ app.MapPost("/task", (HttpContext context, APIConnect.Modelos.Task task ) =>
 
 
 
-app.MapPatch("/task/priority", (HttpContext context, APIConnect.Modelos.Priority pri) =>
+app.MapPatch("/task/edit", (HttpContext context, APIConnect.Modelos.Priority pri) =>
 {
     try
     {
@@ -259,25 +262,25 @@ app.MapPatch("/task/priority", (HttpContext context, APIConnect.Modelos.Priority
             var user = Usuario.cargar(userId);
 
 
-            if(user.getInventario().SetInfoTask(pri.Option, pri.IdTask, pri.Content))
+            if (user.getInventario().SetInfoTask(pri.Option, pri.IdTask, pri.Content))
             {
-                return Results.Json(new { status = 200, message = "Actualizacion correct" });
+                return Results.Json(new { success = true, message = "Actualizacion correcta" });
             }
             else
             {
-                return Results.Json(new { status = 200, message = "Actualizacion fallida" });
+                return Results.Json(new { success = false, message = "Actualizacion fallida" });
             }
 
         }
 
         else
         {
-            return Results.Json(new { status = 401, message = "Token inválido o expirado" });
+            return Results.Json(new { success = false, message = "Towken inválido o expirado" });
         };
     }
     catch (Exception e)
     {
-        return Results.Json(new { status = 500, message = "Error accediendo Inventario" });
+        return Results.Json(new { success = false, message = "Error accediendo Inventario" });
     }
 
 
@@ -299,26 +302,26 @@ app.MapPatch("task/category/{option}", (HttpContext context, string option, APIC
             switch (option.ToLower())
             {
                  case "add":
-                   sucess=  user.getInventario().AddedCategoryToTask(asig.Name, asig.IdTask, userId);
+                   sucess=  user.getInventario().AñadirCategoriaTarea(asig.Name, asig.IdTask);
                     actionMessage = "agrego";
                     break;
 
                 case "remove":
-                    sucess= user.getInventario().removeCategoryTask(asig.IdCategory, asig.IdTask);
+                    sucess= user.getInventario().QuitarCategoriaTarea(asig.Name, asig.IdTask);
                     actionMessage = "quito";
 
                     break;
 
                 default:
-                    return Results.Json(new { status = 400, message = "Filtro inválido. Usa 'add' o 'remove'." });
+                    return Results.Json(new { success =false, message = "Filtro inválido. Usa 'add' o 'remove'." });
             }
             if (sucess)
             {
-                return Results.Json(new { status = 200, message = $"Se {actionMessage} la categoría " });
+                return Results.Json(new { success = true, message = $"Se {actionMessage} la categoría " });
             }
             else
             {
-                return Results.Json(new { status = 401, message = $"No se {actionMessage} la categoría " });
+                return Results.Json(new { success = false, message = $"No se {actionMessage} la categoría " });
             }
         }
         else
@@ -388,7 +391,7 @@ app.MapGet("/categories", (HttpContext context) =>
         {
             var user = Usuario.cargar(userId);
 
-            var json = user.getInventario().ObtenerJsonDeCategory();
+            var json = user.getInventario().ObtenerJsonInventario("categorias");
             return Results.Json(new { status = 200, data = json });
         }
         else
@@ -420,7 +423,7 @@ app.MapPost("/categories",(HttpContext context, APIConnect.Modelos.Category cate
         {
             var user = Usuario.cargar(userId);
 
-            if (user.getInventario().selectAddCategory(category.name, userId, category.description ?? ""))
+            if (user.getInventario().selectAddCategory(category.name,  category.description ?? ""))
             {
                 return Results.Json(new { status = 200, data = "Categoria agregada correctamente" });
             }
@@ -442,6 +445,38 @@ app.MapPost("/categories",(HttpContext context, APIConnect.Modelos.Category cate
 
 }).RequireAuthorization();
 
+
+app.MapPatch("/task/{id}", (HttpContext context, int id) =>
+{
+    try
+    {
+        var token = context.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+        var userId = JWT_ID(token);
+        if (userId > 0)
+        {
+            var user = Usuario.cargar(userId);
+
+            if (user.getInventario().chechTask(id))
+            {
+                return Results.Json(new { status = 200, data = "Tarea Completada" });
+            }
+            else
+            {
+                return Results.Json(new { status = 401, data = "Error de completado" });
+            }
+        }
+        else
+        {
+            return Results.Json(new { status = 401, message = "Token inválido o expirado" });
+
+        }
+    }
+    catch (Exception e)
+    {
+        return Results.Json(new { status = 500, message = "Error accediendo Inventario" });
+    }
+
+}).RequireAuthorization();
 app.MapDelete("/categories/{id}", (HttpContext context, int id) =>
 {
     try
@@ -479,3 +514,5 @@ app.MapDelete("/categories/{id}", (HttpContext context, int id) =>
 }).RequireAuthorization();
 
 app.Run();
+
+

@@ -12,6 +12,8 @@ using System.Diagnostics.Eventing.Reader;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using System.Text.Json;
 using System.Configuration;
+using System.Reflection.Metadata;
+
 
 namespace CapaNegocioPro
 {
@@ -22,98 +24,23 @@ namespace CapaNegocioPro
 
         private CapaAccesoBD.Models.Usuario user { get; set; }
 
-
-        // se encarga de cargar la lista de las categorias del usuario
-        private List<Category> UpdateCategory(CapaAccesoBD.Models.Usuario user)
-        {
-
-            var categoriesToReturn = new List<Category>() { new Category(0, "main") };
-
-            try
-            {
-                var categories = Context.GetInstance().GetDbContext()
-                                         .Categorylabels
-                                         .Where(x => x.Iduser == user.Iduser)
-                                         .ToList();
-
-                foreach (var cat in categories)
-                {
-                    var category = new Category(cat.Idlabel, cat.Name);
-
-                    if (!string.IsNullOrEmpty(cat.Description))
-                    {
-                        category.setDescription(cat.Description);
-                    }
-
-                    categoriesToReturn.Add(category);
-                }
-
-                return categoriesToReturn;
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine($"Error Cargando Categorias : {e}");
-            }
-
-            return categoriesToReturn;
-        }
-
-        // se encarga de cargar la lista de las tareas del usuario
-        private List<Task> UpdateTask(CapaAccesoBD.Models.Usuario user)
-        {
-            var tasksToReturn = new List<Task>();
-            var dbacces = Context.GetInstance().GetDbContext();
-
-            try
-            {
-                var tasks = dbacces.Tasks
-                             .Where(x => x.Iduser == user.Iduser)
-                             .ToList();
+        private ProductoCreador creador { get; set; }
 
 
-                tasksToReturn = tasks.Select(task =>
-                {
-                    var taskObj = new Task(task.Idtask, task.Description, task.Creationdate.ToString(), task.Estado);
 
-                    if (task.Enddate != null)
-                    {
-                        taskObj.setEndDate(task.Enddate.ToString());
-                    }
 
-                    if (task.Priority != null)
-                    {
-                        taskObj.setPriority(task.Priority);
-                    }
-
-                    // Obtener categorías directamente asociadas a la tarea
-                    var categories = dbacces.Asignations
-                                            .Where(asig => asig.Idtask == task.Idtask)
-                                            .SelectMany(asig => dbacces.Categorylabels.Where(c => c.Idlabel == asig.Idlabel))
-                                            .Select(c => c.Name)
-                                            .ToList();
-
-                    // Asignar todas las categorías a la tarea
-                    categories.ForEach(categoryName => taskObj.setCategory(categoryName));
-
-                    return taskObj;
-                }).ToList();
-
-                return tasksToReturn;
-            }
-            catch (Exception e) {
-                Console.WriteLine($"Error Cargando Tareas {e}");
-            }
-            return new List<Task>();
-        }
-
-        //carga el inventario
         public Inventario(CapaAccesoBD.Models.Usuario user)
         {
             try
             {
                 this.user = user;
-                inventarioCategorias = UpdateCategory(user);
-                inventarioTareas = UpdateTask(user);
+
+                creador = new TaskCreador();  
+                inventarioTareas = creador.ObtenerProductos(user).Cast<Task>().ToList(); 
+                creador = new CategoryCreador();
+                inventarioCategorias = creador.ObtenerProductos(user).Cast<Category>().ToList();
+
+    
 
             }
             catch (Exception e)
@@ -124,28 +51,18 @@ namespace CapaNegocioPro
 
       
 
-
+        // remove task
         public bool selectRemoveTask(int i)
         {
             foreach (var item in inventarioTareas)
             {
                 if (item.getIdTask() == i)
                 {
-                    return item.RemoveTask();
+                    return item.EliminarProducto();
                 }
             }
             return false;
         }
-
-        // añadir tarea a un usuario 
-        public bool selectAddTask(string description, string priority, string? endDate = null)
-        {
-
-            return Task.CreateTask(description, priority, this.user.Iduser, endDate);
-
-
-        }
-
 
         // remover categoria de un usuario 
         public bool selectRemoveCategory(int i)
@@ -154,18 +71,50 @@ namespace CapaNegocioPro
             {
                 if (item.getIdLabel() == i)
                 {
-                    return Category.RemoveCategory(i);
+                    return item.EliminarProducto();
                 }
             }
             return false;
         }
 
-        // añadir categoria de un usuario 
-        public bool selectAddCategory(string name, int idUser, string? description = null)
+
+        // añadir tarea a un usuario 
+        public bool selectAddTask(string description, string priority, string? endDate = null)
         {
-            return Category.CreateCategory(name, this.user.Iduser, description);
+            try
+            {
+                creador = new TaskCreador();
+                var task = creador.crearProducto(description, priority, endDate) as Task;
+
+                return task.CargarProducto(this.user.Iduser);
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+
         }
 
+
+        // añadir categoria de un usuario 
+        public bool selectAddCategory(string name, string? description = null)
+        {
+            try
+            {
+                creador = new CategoryCreador();
+               
+                var category = creador.crearProducto(name,description) as Category;
+
+                return category.CargarProducto(this.user.Iduser);
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+
+
+   
         public bool SetInfoTask(string option, int idTask,  string content)
         {
             try
@@ -210,96 +159,74 @@ namespace CapaNegocioPro
             }
         }
 
-        public bool AddedCategoryToTask(string name, int taskId, int userId)
-        {
 
+        public bool chechTask(int idTask)
+        {
             try
             {
-                // Buscamo la tarea
-                var task = inventarioTareas.FirstOrDefault(t => t.getIdTask() == taskId);
-                if (task == null)
+                foreach (var item in inventarioTareas)
                 {
-                    return false;
-                }
-
-                // Buscar o agregar la categoría
-                var category = inventarioCategorias.FirstOrDefault(c => c.getName() == name);
-                if (category == null)
-                {
-                    if (!selectAddCategory(name, userId))
+                    if (item.getIdTask() == idTask)
                     {
-                        Console.WriteLine($"No se pudo agregar la categoría '{name}'.");
-                        return false;
-                    }
 
-                    category = inventarioCategorias.FirstOrDefault(c => c.getName() == name);
-                    if (category == null)
-                    {
-                        Console.WriteLine($"La categoría '{name}' no se encontró después de intentar agregarla.");
-                        return false;
+                        item.Completado();  
+                        return true;
                     }
                 }
-
-                // Realizar la asignación
-                var db = Context.GetInstance().GetDbContext();
-                var asignacion = new CapaAccesoBD.Models.Asignation
-                {
-                    Idlabel = category.getIdLabel(),
-                    Idtask = taskId
-                };
-
-                db.Asignations.Add(asignacion);
-                db.SaveChanges();
-
-                return true;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error al agregar la categoría a la tarea: {ex.Message}");
                 return false;
-            }
-        }
 
-        //quitar asignacion
-        public bool removeCategoryTask(int i, int j)
-        {
-            try
-            {
-
-                var category = inventarioCategorias.FirstOrDefault(c => c.getIdLabel() == i);
-                var task = inventarioTareas.FirstOrDefault(t => t.getIdTask() == j);
-
-
-                if (category == null || task == null)
-                {
-                    return false;
-                }
-
-
-                var db = Context.GetInstance().GetDbContext();
-                var asignacion = db.Asignations.FirstOrDefault(a => a.Idlabel == i && a.Idtask == j);
-
-
-                if (asignacion == null)
-                {
-                    return false;
-                }
-
-
-                db.Asignations.Remove(asignacion);
-                db.SaveChanges();
-
-                return true;
             }
             catch (Exception e)
             {
-
-                Console.WriteLine($"Error al eliminar la asignación: {e}");
-
-
+                Console.WriteLine($"Error al crear la tarea: {e}");
                 return false;
             }
         }
+
+
+        public bool AñadirCategoriaTarea(string name, int indice)
+        {
+            try
+            {
+                var tarea = inventarioTareas.FirstOrDefault(item => item.getIdTask() == indice);
+
+                if (tarea != null)
+                {
+                    if (tarea.AddedCategoryToTask(name, this.user.Iduser))
+                    {
+                        return true;
+                    }
+                }
+                return false;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+
+        public bool QuitarCategoriaTarea(string name, int indice)
+        {
+            try
+            {
+                var tarea = inventarioTareas.FirstOrDefault(item => item.getIdTask() == indice);
+
+                if (tarea != null)
+                {
+                    if (tarea.removeCategoryTask(name))
+                    {
+                        return true;
+                    }
+                }
+                return false;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+
+
 
 
         // filtros 
@@ -328,7 +255,7 @@ namespace CapaNegocioPro
            .ToList();
 
         }
-        public void filterActual()
+        public void filterUncompleted()
         {
 
             this.inventarioTareas = inventarioTareas
@@ -350,31 +277,29 @@ namespace CapaNegocioPro
 
 
         // json get de Tareas y Categoria
-        public object ObtenerJsonDeTareas()
-        {
+       public object ObtenerJsonInventario(string tipoInventario)
+{
+    switch (tipoInventario.ToLower())
+    {
+        case "tareas":
             if (inventarioTareas != null && inventarioTareas.Any())
             {
-                var listaDeTareas = inventarioTareas.Select(item => item.getTaskJson()).ToList();
-                return listaDeTareas;
+                return inventarioTareas.Select(item => item.RetornarJson()).ToList();
             }
-            else
-            {
-                return new { mensaje = "No hay tareas en el inventario." };
-            }
-        }
+            return new { mensaje = "No hay tareas en el inventario." };
 
-        public object ObtenerJsonDeCategory()
-        {
+        case "categorias":
             if (inventarioCategorias != null && inventarioCategorias.Any())
             {
-                var listadeCategorias = inventarioCategorias.Select(item => item.getCategoryJson()).ToList();
-                return listadeCategorias;
+                return inventarioCategorias.Select(item => item.RetornarJson()).ToList();
             }
-            else
-            {
-                return new { mensaje = "No hay categorias en el inventario." };
-            }
-        }
+            return new { mensaje = "No hay categorías en el inventario." };
+
+        default:
+            return new { mensaje = "Tipo de inventario no válido." };
+    }
+}
+
 
 
     }
