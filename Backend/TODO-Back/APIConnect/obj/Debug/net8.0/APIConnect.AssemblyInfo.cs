@@ -15,7 +15,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("APIConnect")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+cda7ecca287833c9e0b4312791818b1c9a7d0895")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f30b04117dffe15d482dfa85eb48c406c7b7efc6")]
 [assembly: System.Reflection.AssemblyProductAttribute("APIConnect")]
 [assembly: System.Reflection.AssemblyTitleAttribute("APIConnect")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

@@ -31,6 +31,19 @@ var builder = WebApplication.CreateBuilder(args);
 
 string key = "U7xuzS$qaa_Xw7n8nW7t9JHwhk1B9GMV9ZF=E1m:cyN";
 
+// Configuración de CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowReactApp", policy =>
+    {
+        policy.WithOrigins("http://localhost:5173") // Origen permitido
+              .AllowAnyHeader()
+              .AllowAnyMethod()
+              .AllowCredentials();
+    });
+});
+
+
 builder.Services.AddAuthorization();
 builder.Services.AddAuthentication("Bearer").AddJwtBearer(opt =>
 {
@@ -49,6 +62,12 @@ builder.Services.AddAuthentication("Bearer").AddJwtBearer(opt =>
 });
 
 var app = builder.Build();
+
+app.UseCors("AllowReactApp");
+app.UseAuthentication();
+app.UseAuthorization();
+
+
 
 /*
  * POST /register
@@ -182,6 +201,13 @@ app.MapGet("/task/{filter?}/{type?}", (HttpContext context, string? filter=null,
                         user.getInventario().filterCategory(type);
                         break;
 
+                    case "complete":
+                        user.getInventario().filterCompleted();
+                        break;
+                    case "uncomplete":
+                        user.getInventario().filterUncompleted();
+                        break;
+
                     default:
                         return Results.Json(new { success = false, message = "Filtro inválido. Usa 'priority' o 'category'." });
                 }
@@ -202,16 +228,7 @@ app.MapGet("/task/{filter?}/{type?}", (HttpContext context, string? filter=null,
 
 }).RequireAuthorization();
 
-/*
- * POST: /task
- * Creamos una tarea Con un json de este tipo, endDate es opcional
- * {
-  "Description": "Estudiar para el examen final",
-  "Priority": "High", puede ser [
-  "EndDate": "2024-12-31"
-}
 
- */
 
 app.MapPost("/task", (HttpContext context, APIConnect.Modelos.Task task ) =>
 {
@@ -373,8 +390,6 @@ app.MapDelete("/task/{id}", (HttpContext context, int id) =>
 
 }).RequireAuthorization();
 
-
-//ZONA CATEGORIAS _________________________________________ CR_D
 /*
  *[Requiere toke AUTHENTICATION]
  * GET /categories
